@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación – Didáctica General | ISFD 6</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap');
+
+  :root {
+    --negro:    #1a1a2e;
+    --azul:     #16213e;
+    --acento:   #e94560;
+    --dorado:   #f5a623;
+    --blanco:   #f8f5f0;
+    --gris:     #8a8a9a;
+    --verde:    #27ae60;
+    --rojo:     #e74c3c;
+    --radio:    10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--negro);
+    color: var(--blanco);
+    min-height: 100vh;
+  }
+
+  /* ───── PANTALLAS ───── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ───── PORTADA ───── */
+  #screen-portada {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #screen-portada.active { display: flex; }
+
+  .portada-img-wrap {
+    width: 100%;
+    max-width: 700px;
+    height: 220px;
+    border-radius: var(--radio);
+    overflow: hidden;
+    margin-bottom: 28px;
+    border: 3px solid var(--acento);
+    background: var(--azul);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .portada-img-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .portada-img-placeholder {
+    color: var(--gris); font-size: 14px; text-align: center; padding: 16px;
+  }
+
+  .portada-card {
+    background: var(--azul);
+    border: 1px solid #2d3561;
+    border-radius: var(--radio);
+    padding: 40px 44px;
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+  }
+  .inst-tag {
+    font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    color: var(--acento); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .portada-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .portada-sub {
+    color: var(--dorado); font-size: 15px; font-weight: 600; margin-bottom: 24px;
+  }
+  .portada-reglas {
+    background: rgba(255,255,255,.04);
+    border-left: 3px solid var(--dorado);
+    border-radius: 6px;
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 14px;
+    color: #d0cfe8;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .portada-reglas strong { color: var(--blanco); }
+
+  .form-group { text-align: left; margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 700; color: var(--gris); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .form-group input {
+    width: 100%; padding: 13px 16px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid #3a3a5c;
+    border-radius: 6px;
+    color: var(--blanco);
+    font-size: 16px;
+    font-family: inherit;
+    transition: border .2s;
+  }
+  .form-group input:focus { outline: none; border-color: var(--acento); }
+
+  .error-msg {
+    background: rgba(233,69,96,.15);
+    border: 1px solid var(--acento);
+    color: #ff8099;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .btn-primary {
+    background: var(--acento);
+    color: #fff;
+    border: none;
+    padding: 16px 36px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    letter-spacing: .5px;
+    transition: background .2s, transform .1s;
+  }
+  .btn-primary:hover { background: #c73652; }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-primary:disabled { background: #555; cursor: not-allowed; }
+
+  .aviso-bibliografico {
+    background: rgba(245,166,35,.10);
+    border: 1px solid var(--dorado);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #ffe09a;
+    margin-bottom: 20px;
+    text-align: left;
+    line-height: 1.6;
+  }
+
+  /* ───── EXAMEN ───── */
+  #screen-examen {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  .exam-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--azul);
+    border-radius: var(--radio);
+    padding: 16px 22px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .exam-header-left { font-size: 13px; color: var(--gris); }
+  .exam-header-left strong { color: var(--blanco); display: block; font-size: 15px; }
+
+  .timer-wrap {
+    background: rgba(233,69,96,.15);
+    border: 1px solid var(--acento);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--acento);
+    letter-spacing: 2px;
+  }
+  .timer-wrap.warning { color: #ff5500; border-color: #ff5500; background: rgba(255,85,0,.15); }
+
+  .progress-bar-wrap {
+    background: rgba(255,255,255,.07);
+    border-radius: 4px;
+    height: 6px;
+    margin-bottom: 26px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--acento);
+    border-radius: 4px;
+    transition: width .3s;
+  }
+
+  .pregunta-card {
+    background: var(--azul);
+    border: 1px solid #2d3561;
+    border-radius: var(--radio);
+    padding: 28px 30px;
+    margin-bottom: 18px;
+    transition: border .2s;
+  }
+  .pregunta-card.respondida { border-color: #3d5a70; }
+  .pregunta-numero {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    color: var(--acento); text-transform: uppercase; margin-bottom: 10px;
+  }
+  .pregunta-texto {
+    font-size: 16px; font-weight: 600; line-height: 1.55;
+    color: var(--blanco); margin-bottom: 18px;
+  }
+
+  .opciones { display: flex; flex-direction: column; gap: 10px; }
+  .opcion-label {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid #3a3a5c;
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: border .15s, background .15s;
+    font-size: 15px;
+    line-height: 1.45;
+    color: #d0cfe8;
+  }
+  .opcion-label:hover { border-color: var(--acento); background: rgba(233,69,96,.07); }
+  .opcion-label input[type=radio] { display: none; }
+  .opcion-label.selected {
+    border-color: var(--acento);
+    background: rgba(233,69,96,.12);
+    color: var(--blanco);
+    font-weight: 600;
+  }
+  .opcion-key {
+    min-width: 24px; height: 24px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid #4a4a6a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--gris);
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .opcion-label.selected .opcion-key {
+    background: var(--acento); border-color: var(--acento); color: #fff;
+  }
+
+  .exam-footer {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--acento);
+    color: var(--acento);
+    padding: 13px 26px;
+    border-radius: 8px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-secondary:hover { background: rgba(233,69,96,.1); }
+
+  /* ───── REVISIÓN ───── */
+  #screen-revision {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+  .revision-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .revision-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 900; margin-bottom: 6px;
+  }
+  .revision-estado {
+    font-size: 14px; color: var(--gris);
+  }
+  .revision-item {
+    background: var(--azul);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 14px;
+    border: 1px solid #2d3561;
+    cursor: pointer;
+    transition: border .15s;
+  }
+  .revision-item:hover { border-color: var(--acento); }
+  .revision-num { min-width: 32px; text-align: center; font-weight: 700; color: var(--acento); }
+  .revision-texto { font-size: 14px; color: #ccc; flex: 1; }
+  .revision-badge {
+    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 20px; letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .badge-ok { background: rgba(39,174,96,.2); color: var(--verde); border: 1px solid var(--verde); }
+  .badge-vacia { background: rgba(245,166,35,.15); color: var(--dorado); border: 1px solid var(--dorado); }
+
+  /* ───── RESULTADO ───── */
+  #screen-resultado {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 16px 80px;
+    text-align: center;
+  }
+  .resultado-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 5vw, 36px);
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .resultado-nombre { color: var(--dorado); }
+  .nota-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    margin: 24px 0 6px;
+  }
+  .nota-aprobado { color: var(--verde); }
+  .nota-reprobado { color: var(--acento); }
+  .nota-label { font-size: 14px; color: var(--gris); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+  .resultado-stats {
+    display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--gris); letter-spacing: 1px; text-transform: uppercase; }
+  .resultado-msg {
+    background: var(--azul); border: 1px solid #2d3561;
+    border-radius: var(--radio); padding: 22px 28px;
+    font-size: 15px; line-height: 1.7; color: #d0cfe8;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  /* ───── ADMIN ───── */
+  #screen-admin {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 16px 80px;
+  }
+  .admin-header {
+    background: var(--azul);
+    border-radius: var(--radio);
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .admin-header h2 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 900; }
+  .admin-unlock {
+    max-width: 420px; margin: 80px auto; text-align: center;
+  }
+  .admin-unlock h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 18px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: rgba(255,255,255,.05);
+    padding: 12px 14px; text-align: left;
+    font-size: 12px; font-weight: 700; color: var(--gris);
+    letter-spacing: 1px; text-transform: uppercase;
+    border-bottom: 1px solid #2d3561;
+  }
+  tbody tr { border-bottom: 1px solid #1e2040; }
+  tbody tr:hover { background: rgba(255,255,255,.025); }
+  tbody td { padding: 12px 14px; font-size: 14px; color: #d0cfe8; }
+  .pill-verde { background: rgba(39,174,96,.15); color: var(--verde); border: 1px solid var(--verde); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+  .pill-rojo  { background: rgba(233,69,96,.15);  color: var(--acento);  border: 1px solid var(--acento);  border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+
+  .btn-export {
+    background: var(--dorado); color: #000;
+    border: none; padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-export:hover { background: #d48c10; }
+
+  /* nav tabs */
+  .nav-link {
+    display: inline-block; padding: 10px 20px; margin-right: 8px;
+    color: var(--gris); font-size: 14px; font-weight: 600; cursor: pointer;
+    border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .nav-link.active-tab { color: var(--acento); border-bottom-color: var(--acento); }
+
+  /* Corrección detallada */
+  .corr-item { background: var(--azul); border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; border: 1px solid #2d3561; }
+  .corr-item.correcta { border-left: 4px solid var(--verde); }
+  .corr-item.incorrecta { border-left: 4px solid var(--acento); }
+  .corr-pregunta { font-size: 14px; font-weight: 600; color: var(--blanco); margin-bottom: 8px; }
+  .corr-respuesta { font-size: 13px; }
+  .corr-tuRespuesta { color: #d0cfe8; }
+  .corr-correcta-text { color: var(--verde); }
+
+  @media(max-width:580px){
+    .portada-card { padding: 24px 20px; }
+    .pregunta-card { padding: 20px 18px; }
+    .nota-display { font-size: 72px; }
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 8px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 0 – PORTADA / ACCESO
+════════════════════════════════════════════════════ -->
+<section id="screen-portada" class="screen active">
+
+  <div style="max-width:700px;width:100%;text-align:center;margin-bottom:16px;padding: 0 16px;">
+    <div class="portada-img-wrap" id="portada-img-wrap">
+      <!-- Si existe Foto.jpg en la misma carpeta, se muestra automáticamente -->
+      <img id="portada-img" src="Foto.jpg" alt="Portada de la evaluación"
+           onerror="this.style.display='none'; document.getElementById('portada-placeholder').style.display='block';">
+      <div class="portada-img-placeholder" id="portada-placeholder" style="display:none;">
+        📷 Coloca un archivo <strong>Foto.jpg</strong> en la misma carpeta<br>para mostrar la imagen de portada.
+      </div>
+    </div>
+  </div>
+
+  <div class="portada-card">
+    <p class="inst-tag">ISFD N° 6 · Neuquén · 2026</p>
+    <h1 class="portada-title">Didáctica General<br>1° Año del Profesorado</h1>
+    <p class="portada-sub">Estrategias para una Pedagogía Crítica y Descolonización del Currículo</p>
+
+    <div class="aviso-bibliografico">
+      📚 <strong>Antes de comenzar:</strong> Asegúrate de haber estudiado el texto de <strong>Tomás Tadeu da Silva</strong>: <em>"Descolonizar el currículo: estrategias para una pedagogía crítica (comentarios sobre el texto de Michael Apple)"</em>.
+    </div>
+
+    <div class="portada-reglas">
+      <strong>Condiciones de la evaluación</strong><br>
+      • 10 preguntas de opción múltiple — 1 punto por respuesta correcta.<br>
+      • <strong>Nota mínima de aprobación: 6 puntos.</strong><br>
+      • Tiempo disponible: <strong>40 minutos</strong>.<br>
+      • Las preguntas se presentan en <strong>orden aleatorio</strong>.<br>
+      • Podés <strong>revisar tus respuestas</strong> antes de entregar.<br>
+      • Se admite <strong>un solo intento por DNI</strong>.
+    </div>
+
+    <div class="error-msg" id="error-acceso"></div>
+
+    <div class="form-group">
+      <label for="inp-nombre">Nombre y Apellido</label>
+      <input type="text" id="inp-nombre" placeholder="Ej.: María González" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label for="inp-dni">DNI (sin puntos)</label>
+      <input type="number" id="inp-dni" placeholder="Ej.: 40123456" autocomplete="off">
+    </div>
+
+    <button class="btn-primary" onclick="iniciarEvaluacion()">Comenzar evaluación →</button>
+
+    <div style="margin-top:22px; border-top:1px solid #2d3561; padding-top:16px;">
+      <span class="nav-link" onclick="mostrarAdmin()" style="font-size:12px;color:var(--gris);">🔒 Acceso docente</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 1 – EXAMEN
+════════════════════════════════════════════════════ -->
+<section id="screen-examen" class="screen">
+  <div class="exam-header">
+    <div class="exam-header-left">
+      <strong id="exam-nombre-display">—</strong>
+      Didáctica General · ISFD N° 6 · 2026
+    </div>
+    <div class="timer-wrap" id="timer-display">40:00</div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <div id="preguntas-container"></div>
+
+  <div class="exam-footer">
+    <button class="btn-secondary" onclick="irARevision()">Revisar antes de entregar</button>
+    <button class="btn-primary" style="width:auto;flex:1;" onclick="confirmarEntrega()">Entregar evaluación ✓</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 2 – REVISIÓN
+════════════════════════════════════════════════════ -->
+<section id="screen-revision" class="screen">
+  <div class="revision-header">
+    <h2>Revisión de respuestas</h2>
+    <p class="revision-estado" id="revision-estado"></p>
+  </div>
+  <div id="revision-lista"></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+    <button class="btn-secondary" onclick="volverAlExamen()">← Volver y editar</button>
+    <button class="btn-primary" style="flex:1;" onclick="confirmarEntrega()">Confirmar y entregar ✓</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 3 – RESULTADO
+════════════════════════════════════════════════════ -->
+<section id="screen-resultado" class="screen">
+  <p class="inst-tag" style="margin-bottom:10px;">Resultado de la evaluación</p>
+  <h2 class="resultado-titulo">¡Hola, <span class="resultado-nombre" id="res-nombre">—</span>!</h2>
+
+  <div class="nota-display" id="res-nota">—</div>
+  <p class="nota-label" id="res-condicion">—</p>
+
+  <div class="resultado-stats">
+    <div class="stat-item"><div class="stat-num" id="res-correctas">—</div><div class="stat-label">Correctas</div></div>
+    <div class="stat-item"><div class="stat-num" id="res-incorrectas">—</div><div class="stat-label">Incorrectas</div></div>
+    <div class="stat-item"><div class="stat-num" id="res-vacias">—</div><div class="stat-label">Sin responder</div></div>
+  </div>
+
+  <div class="resultado-msg" id="res-mensaje"></div>
+
+  <div id="correccion-detallada" style="margin-top:10px;text-align:left;"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA 4 – ADMIN (docente)
+════════════════════════════════════════════════════ -->
+<section id="screen-admin" class="screen">
+
+  <div id="admin-lock">
+    <div class="admin-unlock">
+      <h3>🔒 Acceso docente</h3>
+      <p style="color:var(--gris);font-size:14px;margin-bottom:20px;">Ingresá la contraseña para ver el registro de calificaciones.</p>
+      <div class="form-group"><input type="password" id="admin-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')verificarAdmin()"></div>
+      <div class="error-msg" id="error-admin" style="display:none;"></div>
+      <button class="btn-primary" onclick="verificarAdmin()">Ingresar</button>
+      <br><br>
+      <button class="btn-secondary" onclick="mostrarPantalla('screen-portada')">← Volver</button>
+    </div>
+  </div>
+
+  <div id="admin-panel" style="display:none;">
+    <div class="admin-header">
+      <div>
+        <h2>Registro de Calificaciones</h2>
+        <p style="color:var(--gris);font-size:13px;margin-top:4px;">Didáctica General · ISFD N° 6 · 2026</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-export" onclick="exportarCSV()">⬇ Exportar CSV</button>
+        <button class="btn-secondary" style="font-size:13px;" onclick="limpiarRegistros()">🗑 Limpiar todo</button>
+        <button class="btn-secondary" style="font-size:13px;" onclick="cerrarAdmin()">Salir</button>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;background:var(--azul);border-radius:var(--radio);padding:6px;">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre y Apellido</th>
+            <th>DNI</th>
+            <th>Correctas</th>
+            <th>Nota</th>
+            <th>Condición</th>
+            <th>Fecha / Hora</th>
+          </tr>
+        </thead>
+        <tbody id="admin-tabla-body">
+          <tr><td colspan="7" style="text-align:center;color:var(--gris);padding:30px;">Aún no hay registros.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="color:var(--gris);font-size:12px;margin-top:14px;">Los datos se guardan en el navegador (localStorage). El CSV sirve para llevarlos a una planilla.</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════  
+     JAVASCRIPT
+════════════════════════════════════════════════════ -->
+<script>
+/* ── BANCO DE PREGUNTAS ── */
+const BANCO = [
+  {
+    texto: "De acuerdo con la perspectiva crítica expuesta en el texto, el currículo debe ser comprendido primordialmente como:",
+    opciones: [
+      "Un conjunto estático de contenidos científicos universales.",
+      "Un territorio cuestionado y de lucha por la hegemonía.",
+      "Un documento técnico para la estandarización del aprendizaje.",
+      "Una representación objetiva de la cultura nacional."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "¿Qué implica el proceso de \"desfetichizar lo social\" en el ámbito curricular?",
+    opciones: [
+      "Eliminar las creencias místicas de los programas de estudio.",
+      "Simplificar los conceptos complejos para el sentido común.",
+      "Tornar visibles las conexiones entre la apariencia de los objetos y las relaciones sociales de poder que los producen.",
+      "Centrar la enseñanza exclusivamente en procesos de producción material."
+    ],
+    correcta: 2
+  },
+  {
+    texto: "En la teorización social crítica, las diferencias de raza, género y etnia son conceptualizadas como:",
+    opciones: [
+      "Hechos biológicos naturales que la escuela debe respetar.",
+      "Un producto social construido en el contexto de relaciones sociales de poder.",
+      "Atributos psicológicos individuales ajenos a la historia.",
+      "Categorías universales e inmutables del desarrollo humano."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "El concepto de \"jeroglífico social\" se utiliza en el texto para describir:",
+    opciones: [
+      "La dificultad técnica de los nuevos lenguajes educativos.",
+      "El carácter petrificado del mundo cultural que esconde su condición de construcción social.",
+      "La estructura burocrática de los sistemas escolares modernos.",
+      "La necesidad de recuperar saberes de civilizaciones antiguas."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "Según el texto, ¿cuál es el papel del \"conocimiento oficial\" en el currículo?",
+    opciones: [
+      "Garantizar que todos los alumnos accedan a la verdad científica.",
+      "Neutralizar las diferencias políticas para lograr la cohesión social.",
+      "Corporizar el punto de vista y los intereses de los grupos socialmente dominantes.",
+      "Proporcionar herramientas técnicas para el mercado laboral globalizado."
+    ],
+    correcta: 2
+  },
+  {
+    texto: "¿Cuál es la crítica fundamental que el autor realiza a las \"fechas conmemorativas\" tradicionales en las escuelas?",
+    opciones: [
+      "Que restan tiempo al dictado de los contenidos básicos obligatorios.",
+      "Que suelen reforzar una relación neocolonialista donde el \"otro\" es exotizado y fijado como objeto.",
+      "Que no cuentan con el apoyo suficiente de las familias y la comunidad.",
+      "Que se centran demasiado en la historia local y olvidan el contexto global."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "Sobre la producción de la identidad social, el autor sostiene que:",
+    opciones: [
+      "Es un proceso biológico que se completa antes de la edad escolar.",
+      "Se produce histórica y socialmente tanto en la escuela como en procesos pedagógicos más amplios.",
+      "Es una responsabilidad exclusiva de la familia, no del currículo.",
+      "Depende únicamente del esfuerzo individual y el mérito académico."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "¿Qué estrategia de descolonización propone el autor para trabajar con los materiales curriculares existentes?",
+    opciones: [
+      "Descartarlos por completo y esperar a la producción de nuevos libros oficiales.",
+      "Utilizarlos como materia prima para cuestionar y desestabilizar las representaciones dominantes.",
+      "Seguirlos fielmente para no generar confusión en el alumnado.",
+      "Sustituirlos por actividades recreativas sin contenido textual."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "La noción de \"relaciones sociales\" como dispositivo pedagógico permite:",
+    opciones: [
+      "Mejorar el clima de convivencia y evitar el conflicto en el aula.",
+      "Identificar al currículo y al conocimiento como construcciones históricas e interesadas.",
+      "Organizar a los alumnos según sus capacidades y talentos naturales.",
+      "Fomentar el trabajo en equipo para aumentar la productividad escolar."
+    ],
+    correcta: 1
+  },
+  {
+    texto: "El objetivo final de un currículo orientado a la \"insurrección\" y la \"trasgresión\" es:",
+    opciones: [
+      "Lograr que los estudiantes multipliquen los significados en lugar de aceptar los significados recibidos.",
+      "Eliminar la figura del docente como autoridad académica.",
+      "Unificar todas las culturas en una sola identidad global sin distinciones.",
+      "Promover el conformismo frente a las desigualdades del orden social actual."
+    ],
+    correcta: 0
+  }
+];
+
+const TOTAL_PREGUNTAS = 10;
+const TIEMPO_SEGUNDOS = 40 * 60;
+const NOTA_APROBACION = 6;
+const ADMIN_PASSWORD = "isfd6docente"; // ← Cambiá esta contraseña
+
+/* ── ESTADO GLOBAL ── */
+let orden = [];
+let respuestas = {};
+let timerInterval = null;
+let tiempoRestante = TIEMPO_SEGUNDOS;
+let estudianteActual = { nombre: '', dni: '' };
+
+/* ── UTILIDADES ── */
+function mezclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function mostrarPantalla(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function padTwo(n) { return String(n).padStart(2, '0'); }
+
+/* ── REGISTROS (localStorage) ── */
+const STORAGE_KEY = 'isfd6_registros_2026';
+const DNI_KEY     = 'isfd6_dnis_usados';
+
+function getRegistros() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function getDNIsUsados() {
+  try { return JSON.parse(localStorage.getItem(DNI_KEY) || '[]'); } catch { return []; }
+}
+function guardarRegistro(reg) {
+  const regs = getRegistros();
+  regs.push(reg);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(regs));
+}
+function marcarDNI(dni) {
+  const dnis = getDNIsUsados();
+  dnis.push(String(dni));
+  localStorage.setItem(DNI_KEY, JSON.stringify(dnis));
+}
+function dniYaUsado(dni) {
+  return getDNIsUsados().includes(String(dni));
+}
+
+/* ── INICIO ── */
+function iniciarEvaluacion() {
+  const nombre = document.getElementById('inp-nombre').value.trim();
+  const dni    = document.getElementById('inp-dni').value.trim();
+  const errEl  = document.getElementById('error-acceso');
+
+  errEl.style.display = 'none';
+
+  if (!nombre || nombre.length < 3) {
+    errEl.textContent = '⚠ Por favor ingresá tu nombre y apellido completos.';
+    errEl.style.display = 'block'; return;
+  }
+  if (!dni || dni.length < 7 || dni.length > 9) {
+    errEl.textContent = '⚠ Ingresá un DNI válido (entre 7 y 9 dígitos).';
+    errEl.style.display = 'block'; return;
+  }
+  if (dniYaUsado(dni)) {
+    errEl.textContent = '⚠ Este DNI ya realizó la evaluación. Solo se permite un intento por estudiante.';
+    errEl.style.display = 'block'; return;
+  }
+
+  estudianteActual = { nombre, dni };
+  orden = mezclar([...Array(TOTAL_PREGUNTAS).keys()]);
+  respuestas = {};
+  tiempoRestante = TIEMPO_SEGUNDOS;
+
+  construirExamen();
+  mostrarPantalla('screen-examen');
+  iniciarTimer();
+}
+
+/* ── CONSTRUIR EXAMEN ── */
+function construirExamen() {
+  document.getElementById('exam-nombre-display').textContent = estudianteActual.nombre;
+  const cont = document.getElementById('preguntas-container');
+  cont.innerHTML = '';
+
+  orden.forEach((idxOriginal, posicion) => {
+    const p = BANCO[idxOriginal];
+    const optsAleatorias = mezclar(p.opciones.map((txt, i) => ({ txt, i })));
+
+    const card = document.createElement('div');
+    card.className = 'pregunta-card';
+    card.id = `card-${posicion}`;
+
+    const letras = ['A','B','C','D'];
+    const opcionesHTML = optsAleatorias.map((op, k) => `
+      <label class="opcion-label" id="opt-${posicion}-${op.i}" onclick="seleccionar(${posicion}, ${op.i}, ${idxOriginal})">
+        <input type="radio" name="p${posicion}" value="${op.i}">
+        <span class="opcion-key">${letras[k]}</span>
+        <span>${op.txt}</span>
+      </label>`).join('');
+
+    card.innerHTML = `
+      <p class="pregunta-numero">Pregunta ${posicion + 1} de ${TOTAL_PREGUNTAS}</p>
+      <p class="pregunta-texto">${p.texto}</p>
+      <div class="opciones">${opcionesHTML}</div>`;
+
+    cont.appendChild(card);
+  });
+}
+
+function seleccionar(posicion, valorOpcion, idxOriginal) {
+  respuestas[posicion] = { respuesta: valorOpcion, idxOriginal };
+
+  // quitar selected de todas las opciones de esta pregunta
+  document.querySelectorAll(`[id^="opt-${posicion}-"]`).forEach(el => el.classList.remove('selected'));
+  document.getElementById(`opt-${posicion}-${valorOpcion}`).classList.add('selected');
+  document.getElementById(`card-${posicion}`).classList.add('respondida');
+
+  actualizarProgreso();
+}
+
+function actualizarProgreso() {
+  const contestadas = Object.keys(respuestas).length;
+  document.getElementById('progress-bar').style.width = (contestadas / TOTAL_PREGUNTAS * 100) + '%';
+}
+
+/* ── TIMER ── */
+function iniciarTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tiempoRestante--;
+    const m = Math.floor(tiempoRestante / 60);
+    const s = tiempoRestante % 60;
+    const el = document.getElementById('timer-display');
+    el.textContent = `${padTwo(m)}:${padTwo(s)}`;
+    el.classList.toggle('warning', tiempoRestante <= 300);
+    if (tiempoRestante <= 0) {
+      clearInterval(timerInterval);
+      alert('⏱ Se acabó el tiempo. La evaluación se entrega automáticamente.');
+      calcularResultado();
+    }
+  }, 1000);
+}
+
+/* ── REVISIÓN ── */
+function irARevision() {
+  const lista = document.getElementById('revision-lista');
+  lista.innerHTML = '';
+  let vacias = 0;
+
+  orden.forEach((idxOriginal, pos) => {
+    const p = BANCO[idxOriginal];
+    const res = respuestas[pos];
+    if (!res) vacias++;
+
+    const item = document.createElement('div');
+    item.className = 'revision-item';
+    item.onclick = () => {
+      mostrarPantalla('screen-examen');
+      setTimeout(() => {
+        const el = document.getElementById(`card-${pos}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 80);
+    };
+
+    const resText = res ? `"${BANCO[idxOriginal].opciones[res.respuesta].substring(0,60)}…"` : 'Sin responder';
+    const badge = res ? '<span class="revision-badge badge-ok">Respondida</span>'
+                      : '<span class="revision-badge badge-vacia">Sin responder</span>';
+
+    item.innerHTML = `
+      <div class="revision-num">${pos+1}</div>
+      <div class="revision-texto">${p.texto.substring(0,80)}…<br><small style="color:var(--gris)">${resText}</small></div>
+      ${badge}`;
+    lista.appendChild(item);
+  });
+
+  const contestadas = TOTAL_PREGUNTAS - vacias;
+  document.getElementById('revision-estado').textContent =
+    `${contestadas} de ${TOTAL_PREGUNTAS} preguntas respondidas · ${vacias} sin responder`;
+
+  mostrarPantalla('screen-revision');
+}
+
+function volverAlExamen() { mostrarPantalla('screen-examen'); }
+
+/* ── ENTREGA ── */
+function confirmarEntrega() {
+  const vacias = TOTAL_PREGUNTAS - Object.keys(respuestas).length;
+  if (vacias > 0) {
+    if (!confirm(`Tenés ${vacias} pregunta(s) sin responder. ¿Querés entregar igual?`)) return;
+  } else {
+    if (!confirm('¿Confirmás la entrega de la evaluación?')) return;
+  }
+  clearInterval(timerInterval);
+  calcularResultado();
+}
+
+/* ── RESULTADO ── */
+function calcularResultado() {
+  let correctas = 0;
+
+  orden.forEach((idxOriginal, pos) => {
+    const res = respuestas[pos];
+    if (res && res.respuesta === BANCO[idxOriginal].correcta) correctas++;
+  });
+
+  const nota = correctas;
+  const vacias = TOTAL_PREGUNTAS - Object.keys(respuestas).length;
+  const incorrectas = TOTAL_PREGUNTAS - correctas - vacias;
+  const aprobado = nota >= NOTA_APROBACION;
+
+  // Mostrar resultado
+  document.getElementById('res-nombre').textContent = estudianteActual.nombre;
+  const notaEl = document.getElementById('res-nota');
+  notaEl.textContent = nota;
+  notaEl.className = 'nota-display ' + (aprobado ? 'nota-aprobado' : 'nota-reprobado');
+  document.getElementById('res-condicion').textContent = aprobado ? '✓ APROBADA' : '✗ DESAPROBADA';
+  document.getElementById('res-correctas').textContent  = correctas;
+  document.getElementById('res-incorrectas').textContent = incorrectas;
+  document.getElementById('res-vacias').textContent     = vacias;
+
+  const msgs = {
+    10: "¡Excelente! Dominás a la perfección los conceptos del texto de Da Silva.",
+    9:  "¡Muy bien! Demostrás una comprensión muy sólida de la pedagogía crítica.",
+    8:  "¡Bien! Comprendiste los núcleos centrales del enfoque descolonizador.",
+    7:  "Bien. Lograste aprobar con un buen manejo de los conceptos principales.",
+    6:  "Aprobaste. Te recomendamos repasar los puntos que quedaron pendientes.",
+    5:  "Por poco. Necesitás reforzar la lectura del texto. Podés mejorar.",
+    0:  "Esta evaluación representa una oportunidad de aprendizaje. ¡A repasar el material!"
+  };
+  const msgKey = nota >= 10 ? 10 : nota >= 9 ? 9 : nota >= 8 ? 8 : nota >= 7 ? 7 : nota >= 6 ? 6 : nota >= 5 ? 5 : 0;
+  document.getElementById('res-mensaje').textContent = msgs[msgKey];
+
+  // Corrección detallada
+  const corrDiv = document.getElementById('correccion-detallada');
+  corrDiv.innerHTML = '<h3 style="font-family:\'Playfair Display\',serif;margin-bottom:14px;font-size:18px;">Detalle de respuestas</h3>';
+  orden.forEach((idxOriginal, pos) => {
+    const p = BANCO[idxOriginal];
+    const res = respuestas[pos];
+    const esCorrecta = res && res.respuesta === p.correcta;
+    const item = document.createElement('div');
+    item.className = 'corr-item ' + (esCorrecta ? 'correcta' : 'incorrecta');
+    const tuResp = res ? p.opciones[res.respuesta] : 'Sin responder';
+    item.innerHTML = `
+      <p class="corr-pregunta">${pos+1}. ${p.texto}</p>
+      <p class="corr-respuesta corr-tuRespuesta">Tu respuesta: ${tuResp}</p>
+      ${!esCorrecta ? `<p class="corr-respuesta corr-correcta-text">✓ Respuesta correcta: ${p.opciones[p.correcta]}</p>` : ''}`;
+    corrDiv.appendChild(item);
+  });
+
+  // Guardar registro
+  const ahora = new Date();
+  const fechaStr = `${padTwo(ahora.getDate())}/${padTwo(ahora.getMonth()+1)}/${ahora.getFullYear()} ${padTwo(ahora.getHours())}:${padTwo(ahora.getMinutes())}`;
+  guardarRegistro({
+    nombre: estudianteActual.nombre,
+    dni: estudianteActual.dni,
+    correctas,
+    nota,
+    aprobado,
+    fecha: fechaStr
+  });
+  marcarDNI(estudianteActual.dni);
+
+  mostrarPantalla('screen-resultado');
+}
+
+/* ── ADMIN ── */
+function mostrarAdmin() { mostrarPantalla('screen-admin'); }
+
+function verificarAdmin() {
+  const pass = document.getElementById('admin-pass').value;
+  const errEl = document.getElementById('error-admin');
+  if (pass === ADMIN_PASSWORD) {
+    document.getElementById('admin-lock').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    renderTablaAdmin();
+  } else {
+    errEl.textContent = '⚠ Contraseña incorrecta.';
+    errEl.style.display = 'block';
+  }
+}
+
+function renderTablaAdmin() {
+  const regs = getRegistros();
+  const tbody = document.getElementById('admin-tabla-body');
+  if (!regs.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gris);padding:30px;">Aún no hay registros.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = regs.map((r, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${r.nombre}</td>
+      <td>${r.dni}</td>
+      <td>${r.correctas}/${TOTAL_PREGUNTAS}</td>
+      <td><strong>${r.nota}</strong></td>
+      <td>${r.aprobado ? '<span class="pill-verde">Aprobada</span>' : '<span class="pill-rojo">Desaprobada</span>'}</td>
+      <td>${r.fecha}</td>
+    </tr>`).join('');
+}
+
+function exportarCSV() {
+  const regs = getRegistros();
+  if (!regs.length) { alert('No hay registros para exportar.'); return; }
+  const cabecera = 'N°,Nombre y Apellido,DNI,Correctas,Nota,Condición,Fecha\n';
+  const filas = regs.map((r, i) =>
+    `${i+1},"${r.nombre}",${r.dni},${r.correctas}/${TOTAL_PREGUNTAS},${r.nota},"${r.aprobado ? 'Aprobada' : 'Desaprobada'}","${r.fecha}"`
+  ).join('\n');
+  const blob = new Blob(['\uFEFF' + cabecera + filas], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'calificaciones_didactica_isfd6.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function limpiarRegistros() {
+  if (confirm('¿Borrar TODOS los registros y permitir que los mismos DNIs vuelvan a rendir? Esta acción no se puede deshacer.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(DNI_KEY);
+    renderTablaAdmin();
+    alert('Registros eliminados.');
+  }
+}
+
+function cerrarAdmin() {
+  document.getElementById('admin-lock').style.display = 'block';
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('admin-pass').value = '';
+  document.getElementById('error-admin').style.display = 'none';
+  mostrarPantalla('screen-portada');
+}
+</script>
+</body>
+</html>
